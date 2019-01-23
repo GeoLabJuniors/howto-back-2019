@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@btnHelper("მომხმარებლები", "Index", "User")
+
+@btnHelper("მოთხოვნები", "Index", "Requests")
+
+@btnHelper("სტატიები", "Index", "Articles")
+
+@btnHelper("კონტაქტი და ჩვენს შესახებ", "Index", "WebsiteInfos")
+
+@btnHelper("კატეგორიები", "Index", "Categories")
+
+
+
+@helper btnHelper(string linkName, string actionName, string controllerName)
+{
+    <br />
+    <br />
+    <button class="btn btn-success">
+        @Html.ActionLink(linkName, actionName, controllerName, null, new { @style = "color:white" })
+    </button>
+}

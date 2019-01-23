@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c52596e784c74a5b8fc85e2e2422a38e" Name="Diagram1">
+        <EntityTypeShape EntityType="HowToDbModel.articleCategories" Width="1.5" PointX="7.5" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.articles" Width="1.5" PointX="5.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.articlesTags" Width="1.5" PointX="7.5" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.categories" Width="1.5" PointX="5.25" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.favourites" Width="1.5" PointX="7.5" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.images" Width="1.5" PointX="10.5" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.requests" Width="1.5" PointX="5.25" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.tags" Width="1.5" PointX="5.25" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.users" Width="1.5" PointX="3" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.usersCategories" Width="1.5" PointX="0.75" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="HowToDbModel.websiteInfos" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="HowToDbModel.FK_articleCategories_articles" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_articleCategories_categories" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_articles_users" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_articlesTags_articles" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_favourites_articles" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_media_articles" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_articlesTags_tags" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_favourites_users" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_media_users" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_requests_users" ManuallyRouted="false" />
+        <AssociationConnector Association="HowToDbModel.FK_users_usersCategories" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
