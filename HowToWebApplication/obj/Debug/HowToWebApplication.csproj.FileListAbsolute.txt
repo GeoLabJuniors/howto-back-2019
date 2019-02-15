@@ -1,5 +1,3 @@
-C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.csprojAssemblyReference.cache
-C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.csproj.CoreCompileInputs.cache
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\ApplicationInsights.config
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\HowToWebApplication.dll.config
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\HowToWebApplication.dll
@@ -115,6 +113,8 @@ C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\Microsoft.
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\Microsoft.AI.WindowsServer.xml
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\Microsoft.AI.Web.xml
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.csproj.CoreCompileInputs.cache
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.csproj.CopyComplete
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.dll
 C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.pdb
+C:\Users\ika\source\repos\HowToWebApplication\HowToWebApplication\obj\Debug\HowToWebApplication.csprojAssemblyReference.cache

@@ -49,8 +49,7 @@ namespace HowToWebApplication.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "ელ-ფოსტა")]
-        [EmailAddress(ErrorMessage = "ელ-ფოსტის მისამართი არასწორია")]
+        [Display(Name = "ელ-ფოსტა")]     
         public string Email { get; set; }
 
         [Required]

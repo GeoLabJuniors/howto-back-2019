@@ -74,23 +74,32 @@ namespace HowToWebApplication.Controllers
         [AllowAnonymous]
         public ActionResult Login(LoginViewModel user)
         {
-            if (ModelState.IsValid && dataProvider.ValidLogin(user))
+            if (ModelState.IsValid && dataProvider.ValidLoginAdmin(user))
             {
-                LoginHelper.CreateUser(new users()
+                if (dataProvider.LoginCategory(user).isActive)
                 {
-                    password = user.Password,
-                    email = user.Email,
-                    categoriesId = dataProvider.LoginCategory(user).categoriesId
-                });
-                return RedirectToAction("Index", "Home");
-            }
-
+                    LoginHelper.CreateUser(new users()
+                    {
+                        password = user.Password,
+                        email = user.Email,
+                        categoriesId = dataProvider.LoginCategory(user).categoriesId
+                    });
+                    return RedirectToAction("Index", "Admin");
+                        }
+                 else
+                    {
+                       ViewBag.Error = "თქვენ დაბლოკილი ხართ. კითხვების შემთხვევაში მოგვწერეთ საიტზე მითითებულ იმეილზე.";
+                       return View();
+                       }   
+                 }
             else
             {
                 ViewBag.Error = "არასწორადაა მონაცემები შეყვანილი";
                 return View();
-            }
+                 }
         }
+            
+        
 
         //
         // POST: /Account/Login
@@ -188,12 +197,12 @@ namespace HowToWebApplication.Controllers
                     surname = model.Surname,
                     email = model.Email,
                     password = SHA.GenerateSHA512String(model.Password),
-                    loginDate = localDate,
+                    registerDate = localDate,
                     isActive = true,
                     categoriesId = userData.GetUserCategory().Id,
                 });
             }
-            if (ModelState.IsValid && dataProvider.ValidLogin(new LoginViewModel()
+            if (ModelState.IsValid && dataProvider.ValidLoginUser(new LoginViewModel()
             { Email = model.Email, Password = model.Password }))
             {
                 LoginHelper.CreateUser(new users()
@@ -202,7 +211,7 @@ namespace HowToWebApplication.Controllers
                     email = model.Email,
                     categoriesId = userData.GetUserCategory().Id,
                 });
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("UserList", "Admin");
             }
             return View(model);
         }
@@ -459,7 +468,7 @@ namespace HowToWebApplication.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Admin");
         }
 
         //
@@ -471,7 +480,7 @@ namespace HowToWebApplication.Controllers
 
             LoginHelper.LogOff();
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Admin");
         }
         //
         // GET: /Account/ExternalLoginFailure

@@ -21,13 +21,13 @@ namespace HowToWebApplication.Models
             this.articlesTags = new HashSet<articlesTags>();
             this.favourites = new HashSet<favourites>();
             this.images = new HashSet<images>();
+            this.ratings = new HashSet<ratings>();
         }
     
         public int Id { get; set; }
         public string title { get; set; }
         public string content { get; set; }
         public System.DateTime date { get; set; }
-        public Nullable<byte> rating { get; set; }
         public bool isBlocked { get; set; }
         public bool isRequested { get; set; }
         public int usersId { get; set; }
@@ -41,5 +41,7 @@ namespace HowToWebApplication.Models
         public virtual ICollection<favourites> favourites { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<images> images { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ratings> ratings { get; set; }
     }
 }

@@ -22,8 +22,10 @@ namespace HowToWebApplication.Models
     
         public int Id { get; set; }
         public string name { get; set; }
+        public Nullable<int> parentId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<articleCategories> articleCategories { get; set; }
+        public virtual parentCategories parentCategories { get; set; }
     }
 }

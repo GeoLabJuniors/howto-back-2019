@@ -15,11 +15,11 @@ namespace HowToWebApplication.Models
     public partial class requests
     {
         public int Id { get; set; }
-        public string title { get; set; }
+        public int number { get; set; }
         public string content { get; set; }
         public int upvote { get; set; }
         public bool isDone { get; set; }
-        public int usersId { get; set; }
+        public Nullable<int> usersId { get; set; }
     
         public virtual users users { get; set; }
     }

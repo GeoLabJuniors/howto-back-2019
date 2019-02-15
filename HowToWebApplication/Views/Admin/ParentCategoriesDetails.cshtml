@@ -1,0 +1,25 @@
+﻿@model HowToWebApplication.Models.parentCategories
+
+@{
+    ViewBag.Title = "ParentCategoriesDetails";
+}
+
+
+<div>
+    <h4>Parent Categories Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "EditParentCategories", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "ParentCategoriesList")
+</p>

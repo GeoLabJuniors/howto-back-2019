@@ -1,0 +1,39 @@
+﻿@model IEnumerable<HowToWebApplication.Models.categories>
+
+@{
+    ViewBag.Title = "CategoriesList";
+}
+
+<h4>Categories List</h4>
+
+<p>
+    @Html.ActionLink("Create New", "CreateCategories")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th>
+            Parent Category @Html.DisplayNameFor(model => model.parentCategories.name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+             @Html.DisplayFor(modelItem => item.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.parentCategories.name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "EditCategories", new { id=item.Id }) |
+            @Html.ActionLink("Details", "CategoriesDetails", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "DeleteCategories", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

@@ -14,5 +14,9 @@ namespace HowToWebApplication.Models
         [Required]
         [Display(Name = "Name")]
         public string Name { get; set; }
+
+       
+        [Display(Name = "ParentCategory")]
+        public Nullable<int>  ParentCategoriesId { get; set; }
     }
 }

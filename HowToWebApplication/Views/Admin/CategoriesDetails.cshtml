@@ -1,0 +1,33 @@
+﻿@model HowToWebApplication.Models.categories
+
+@{
+    ViewBag.Title = "CategoriesDetails";
+}
+
+<h2>Categories Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+        <dt>
+            Parent Category @Html.DisplayNameFor(model => model.parentCategories.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.parentCategories.name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "EditCategories", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "CategoriesList")
+</p>
