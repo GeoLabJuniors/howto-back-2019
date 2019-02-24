@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="HowToDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="HowToDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="articleCategories">
           <Key>
             <PropertyRef Name="Id" />
@@ -58,13 +58,6 @@
           <Property Name="url" Type="nvarchar(max)" Nullable="false" />
           <Property Name="articlesId" Type="int" />
           <Property Name="usersId" Type="int" />
-        </EntityType>
-        <EntityType Name="parentCategories">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="ratings">
           <Key>
@@ -196,16 +189,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_categories_parentCategories">
-          <End Role="parentCategories" Type="Self.parentCategories" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="categories" Type="Self.categories" Multiplicity="*" />
+        <Association Name="FK_categories_categories">
+          <End Role="categories" Type="Self.categories" Multiplicity="0..1" />
+          <End Role="categories1" Type="Self.categories" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="parentCategories">
+            <Principal Role="categories">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="categories">
+            <Dependent Role="categories1">
               <PropertyRef Name="parentId" />
             </Dependent>
           </ReferentialConstraint>
@@ -313,7 +304,6 @@
           <EntitySet Name="categories" EntityType="Self.categories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="favourites" EntityType="Self.favourites" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="images" EntityType="Self.images" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="parentCategories" EntityType="Self.parentCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ratings" EntityType="Self.ratings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="requests" EntityType="Self.requests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
@@ -341,9 +331,9 @@
             <End Role="tags" EntitySet="tags" />
             <End Role="articlesTags" EntitySet="articlesTags" />
           </AssociationSet>
-          <AssociationSet Name="FK_categories_parentCategories" Association="Self.FK_categories_parentCategories">
-            <End Role="parentCategories" EntitySet="parentCategories" />
+          <AssociationSet Name="FK_categories_categories" Association="Self.FK_categories_categories">
             <End Role="categories" EntitySet="categories" />
+            <End Role="categories1" EntitySet="categories" />
           </AssociationSet>
           <AssociationSet Name="FK_favourites_articles" Association="Self.FK_favourites_articles">
             <End Role="articles" EntitySet="articles" />
@@ -378,7 +368,8 @@
             <End Role="users" EntitySet="users" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="HowToDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -428,7 +419,8 @@
           <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="parentId" Type="Int32" />
           <NavigationProperty Name="articleCategories" Relationship="Self.FK_articleCategories_categories" FromRole="categories" ToRole="articleCategories" />
-          <NavigationProperty Name="parentCategories" Relationship="Self.FK_categories_parentCategories" FromRole="categories" ToRole="parentCategories" />
+          <NavigationProperty Name="categories1" Relationship="Self.FK_categories_categories" FromRole="categories" ToRole="categories1" />
+          <NavigationProperty Name="categories2" Relationship="Self.FK_categories_categories" FromRole="categories1" ToRole="categories" />
         </EntityType>
         <EntityType Name="favourites">
           <Key>
@@ -451,14 +443,6 @@
           <Property Name="usersId" Type="Int32" />
           <NavigationProperty Name="articles" Relationship="Self.FK_media_articles" FromRole="images" ToRole="articles" />
           <NavigationProperty Name="users" Relationship="Self.FK_media_users" FromRole="images" ToRole="users" />
-        </EntityType>
-        <EntityType Name="parentCategories">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="categories" Relationship="Self.FK_categories_parentCategories" FromRole="parentCategories" ToRole="categories" />
         </EntityType>
         <EntityType Name="ratings">
           <Key>
@@ -552,7 +536,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_articleCategories_categories">
-          <End Role="categories" Type="Self.categories" Multiplicity="1" />
+          <End Role="categories" Type="Self.categories" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="articleCategories" Type="Self.articleCategories" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="categories">
@@ -635,14 +621,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_categories_parentCategories">
-          <End Role="parentCategories" Type="Self.parentCategories" Multiplicity="0..1" />
-          <End Role="categories" Type="Self.categories" Multiplicity="*" />
+        <Association Name="FK_categories_categories">
+          <End Role="categories" Type="Self.categories" Multiplicity="0..1" />
+          <End Role="categories1" Type="Self.categories" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="parentCategories">
+            <Principal Role="categories">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="categories">
+            <Dependent Role="categories1">
               <PropertyRef Name="parentId" />
             </Dependent>
           </ReferentialConstraint>
@@ -714,7 +700,6 @@
           <EntitySet Name="categories" EntityType="Self.categories" />
           <EntitySet Name="favourites" EntityType="Self.favourites" />
           <EntitySet Name="images" EntityType="Self.images" />
-          <EntitySet Name="parentCategories" EntityType="Self.parentCategories" />
           <EntitySet Name="ratings" EntityType="Self.ratings" />
           <EntitySet Name="requests" EntityType="Self.requests" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
@@ -754,9 +739,9 @@
             <End Role="tags" EntitySet="tags" />
             <End Role="articlesTags" EntitySet="articlesTags" />
           </AssociationSet>
-          <AssociationSet Name="FK_categories_parentCategories" Association="Self.FK_categories_parentCategories">
-            <End Role="parentCategories" EntitySet="parentCategories" />
+          <AssociationSet Name="FK_categories_categories" Association="Self.FK_categories_categories">
             <End Role="categories" EntitySet="categories" />
+            <End Role="categories1" EntitySet="categories" />
           </AssociationSet>
           <AssociationSet Name="FK_favourites_users" Association="Self.FK_favourites_users">
             <End Role="users" EntitySet="users" />
@@ -842,14 +827,6 @@
                 <ScalarProperty Name="url" ColumnName="url" />
                 <ScalarProperty Name="articlesId" ColumnName="articlesId" />
                 <ScalarProperty Name="usersId" ColumnName="usersId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="parentCategories">
-            <EntityTypeMapping TypeName="HowToDbModel.parentCategories">
-              <MappingFragment StoreEntitySet="parentCategories">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

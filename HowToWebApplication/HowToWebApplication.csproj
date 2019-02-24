@@ -209,72 +209,67 @@
     <Compile Include="Helpers\PasswordHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\articleCategories.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\articles.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\articlesTags.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\categories.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\CategoriesCustomClass.cs" />
     <Compile Include="Models\favourites.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HowTo.Context.cs">
+    <Compile Include="Models\HowToDB.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>HowTo.Context.tt</DependentUpon>
+      <DependentUpon>HowToDB.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HowTo.cs">
+    <Compile Include="Models\HowToDB.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HowTo.Designer.cs">
+    <Compile Include="Models\HowToDB.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>HowTo.edmx</DependentUpon>
+      <DependentUpon>HowToDB.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\images.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MenuDataProvider.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\CategoriesDataProvider.cs" />
-    <Compile Include="Models\parentCategories.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ParentCategoriesDataProvider.cs" />
-    <Compile Include="Models\ParentCategoriesCustomClass.cs" />
     <Compile Include="Models\ratings.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\requests.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagrams.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\tags.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\users.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\usersCategories.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UsersCustomClass.cs" />
     <Compile Include="Models\UsersCustomeEditClass.cs" />
     <Compile Include="Models\UsersDataProvider.cs" />
     <Compile Include="Models\UsersAccountDataProvider.cs" />
     <Compile Include="Models\websiteInfos.cs">
-      <DependentUpon>HowTo.tt</DependentUpon>
+      <DependentUpon>HowToDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -287,29 +282,30 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Models\HowTo.Context.tt">
+    <Content Include="Models\HowToDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>HowTo.edmx</DependentUpon>
-      <LastGenOutput>HowTo.Context.cs</LastGenOutput>
+      <DependentUpon>HowToDB.edmx</DependentUpon>
+      <LastGenOutput>HowToDB.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\HowTo.tt">
+    <Content Include="Models\HowToDB.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>HowTo.edmx</DependentUpon>
-      <LastGenOutput>HowTo.cs</LastGenOutput>
+      <DependentUpon>HowToDB.edmx</DependentUpon>
+      <LastGenOutput>HowToDB.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EntityDeploy Include="Models\HowTo.edmx">
+    <EntityDeploy Include="Models\HowToDB.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>HowTo.Designer.cs</LastGenOutput>
+      <LastGenOutput>HowToDB.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\HowTo.edmx.diagram">
-      <DependentUpon>HowTo.edmx</DependentUpon>
+    <Content Include="Models\HowToDB.edmx.diagram">
+      <DependentUpon>HowToDB.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\Category.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -361,17 +357,12 @@
     <Content Include="Views\Admin\CreateUser.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Admin\EditUser.cshtml" />
-    <Content Include="Views\Admin\CategoriesList.cshtml" />
-    <Content Include="Views\Admin\CreateCategories.cshtml" />
-    <Content Include="Views\Admin\EditCategories.cshtml" />
-    <Content Include="Views\Admin\DeleteCategories.cshtml" />
-    <Content Include="Views\Admin\CreateParentCategories.cshtml" />
-    <Content Include="Views\Admin\EditParentCategories.cshtml" />
-    <Content Include="Views\Admin\DeleteParentCategories.cshtml" />
-    <Content Include="Views\Admin\ParentCategoriesList.cshtml" />
-    <Content Include="Views\Admin\ParentCategoriesDetails.cshtml" />
-    <Content Include="Views\Admin\CategoriesDetails.cshtml" />
     <Content Include="Views\Admin\fullDeleteUser.cshtml" />
+    <Content Include="Views\Admin\CreateCategories.cshtml" />
+    <Content Include="Views\Admin\CategoriesList.cshtml" />
+    <Content Include="Views\Admin\CategoriesDetails.cshtml" />
+    <Content Include="Views\Admin\DeleteCategories.cshtml" />
+    <Content Include="Views\Admin\EditCategories.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

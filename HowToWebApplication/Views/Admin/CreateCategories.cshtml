@@ -1,17 +1,17 @@
 ﻿@model HowToWebApplication.Models.CategoriesCustomClass
 
-@{
-    ViewBag.Title = "CreateCategories";
-}
 
-<h4>Create Categories</h4>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/Category.js"></script>
 
 
-@using (Html.BeginForm()) 
+
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
 <div class="form-horizontal">
+    <h4>Create Categories</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
@@ -23,13 +23,24 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.ParentCategoriesId, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.ParentId, "Parent Category", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownList("ParentCategoriesId", ViewBag.ParentId as SelectList, "-- Please Select -- ", htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.ParentCategoriesId, "", new { @class = "text-danger" })
+            @Html.DropDownList("ParentId", ViewBag.ParentCategoryId as SelectList, "-- Please Select -- ", htmlAttributes: new { @class = "form-control ParentCategory" })
+            @Html.ValidationMessageFor(model => model.ParentId, "", new { @class = "text-danger" })
         </div>
     </div>
 
+    <div class="form-group" id="CategoryGroup">
+        <b style="color:tomato"></b><br />
+        <label class="control-label col-md-2" for="" style="color:tomato">კატეგორიის დამატება</label>
+        <div class="col-md-2">
+            <input class="form-control text-box single-line" id="CategoryInput" name="newCategory" type="text" value="" />
+        </div>
+        <div class="col-md-2">
+            <button type="button" id="AddButton" class="btn btn-primary"> დამატება </button>
+        </div>
+    </div>
+    
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" value="Create" class="btn btn-default" />
@@ -37,11 +48,11 @@
     </div>
 </div>
 }
-
 <div>
     @Html.ActionLink("Back to List", "CategoriesList")
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
 }

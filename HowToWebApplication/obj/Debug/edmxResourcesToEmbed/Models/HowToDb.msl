@@ -17,7 +17,6 @@
           <ScalarProperty Name="title" ColumnName="title" />
           <ScalarProperty Name="content" ColumnName="content" />
           <ScalarProperty Name="date" ColumnName="date" />
-          <ScalarProperty Name="rating" ColumnName="rating" />
           <ScalarProperty Name="isBlocked" ColumnName="isBlocked" />
           <ScalarProperty Name="isRequested" ColumnName="isRequested" />
           <ScalarProperty Name="usersId" ColumnName="usersId" />
@@ -38,6 +37,7 @@
         <MappingFragment StoreEntitySet="categories">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="parentId" ColumnName="parentId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -61,11 +61,21 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="ratings">
+      <EntityTypeMapping TypeName="HowToDbModel.ratings">
+        <MappingFragment StoreEntitySet="ratings">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="rating" ColumnName="rating" />
+          <ScalarProperty Name="articlesId" ColumnName="articlesId" />
+          <ScalarProperty Name="userId" ColumnName="userId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="requests">
       <EntityTypeMapping TypeName="HowToDbModel.requests">
         <MappingFragment StoreEntitySet="requests">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="number" ColumnName="number" />
           <ScalarProperty Name="content" ColumnName="content" />
           <ScalarProperty Name="upvote" ColumnName="upvote" />
           <ScalarProperty Name="isDone" ColumnName="isDone" />
@@ -100,7 +110,7 @@
           <ScalarProperty Name="surname" ColumnName="surname" />
           <ScalarProperty Name="email" ColumnName="email" />
           <ScalarProperty Name="password" ColumnName="password" />
-          <ScalarProperty Name="loginDate" ColumnName="loginDate" />
+          <ScalarProperty Name="registerDate" ColumnName="registerDate" />
           <ScalarProperty Name="isActive" ColumnName="isActive" />
           <ScalarProperty Name="categoriesId" ColumnName="categoriesId" />
         </MappingFragment>

@@ -14,8 +14,8 @@ namespace HowToWebApplication.Models
         {
             return _db.categories.FirstOrDefault(e => e.name == category.Name) == null ? false : true;
         }
-       
 
+      
         public categories GetCategoriesById(int id)
         {
             return _db.categories.FirstOrDefault(e => e.Id == id);
@@ -30,7 +30,7 @@ namespace HowToWebApplication.Models
                 {
                     name = category.Name,
                     Id = category.Id,
-                    parentId=category.ParentCategoriesId
+                    parentId=category.ParentId
                 });
             }
             _db.SaveChanges();
@@ -43,7 +43,7 @@ namespace HowToWebApplication.Models
             if (!Exist(category) || result.name == category.Name)
             {
                 result.name = category.Name;
-                result.parentId = category.ParentCategoriesId;
+                result.parentId = category.ParentId;
             }
             _db.SaveChanges();
         }

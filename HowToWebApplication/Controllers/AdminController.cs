@@ -16,7 +16,7 @@ namespace HowToWebApplication.Controllers
         HowToDbEntities _db = new HowToDbEntities();
         UsersDataProvider UserData = new UsersDataProvider();
         CategoriesDataProvider CategoriesData = new CategoriesDataProvider();
-        ParentCategoriesDataProvider ParentCategoriesData = new ParentCategoriesDataProvider();
+        
 
         public ActionResult Index()
         {
@@ -202,7 +202,9 @@ namespace HowToWebApplication.Controllers
         // GET: Categories/Create
         public ActionResult CreateCategories()
         {
-            ViewBag.ParentId = new SelectList(_db.parentCategories.ToList(), "Id", "Name");
+            var list = _db.categories.ToList();
+            list.Insert(list.Count, new categories() { Id = 0, name = "სხვა" });
+            ViewBag.ParentCategoryId = new SelectList(list, "Id", "Name");
             return View();
         }
 
@@ -211,7 +213,9 @@ namespace HowToWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreateCategories(CategoriesCustomClass model)
         {
-            ViewBag.ParentId = new SelectList(_db.parentCategories.ToList(), "Id", "Name");
+            //var CategoriesList = _db.categories.ToList();
+            //CategoriesList.Insert(0, new categories() { Id = 0, name = "სხვა" });           
+            //ViewBag.ParentId = new SelectList(CategoriesList, "Id", "Name");
             if (ModelState.IsValid)
             {
                 CategoriesData.CreateCategories(model);
@@ -224,32 +228,52 @@ namespace HowToWebApplication.Controllers
             }
         }
 
-        // "-- Please Select -- " bug-ი აქვს
+        //add new category 
+        public ActionResult AddNewCategory(string categoryName)
+        {
+            var categories = _db.categories;
+            
+                if (categories.Count(e => e.name == categoryName) == 0)
+                {
+                    _db.categories.Add(new categories() { Id=0, name = categoryName });
+                    _db.SaveChanges();
+                }               
+           
+                var list= _db.categories.ToList();
+                list.Insert(list.Count, new categories() { Id = 0, name = "სხვა" });
+                var result = list.OrderByDescending(e => e.Id).Select(c => new { Id = c.Id, name = c.name });
+                return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         //// GET: Categories/Edit/5
         public ActionResult EditCategories(int id)
         {
             var result = CategoriesData.GetCategoriesById(id);
-            var list = _db.parentCategories.ToList();
-            list.Insert(0, new parentCategories() { name = "-- Please Select --" });  
-            ViewBag.ParentId = new SelectList( list, "Id", "Name", result.parentId);
+            var list = _db.categories.ToList();
+           // list.Insert(0, new categories() { name = "-- Please Select --" });
+            list.Insert(list.Count, new categories() { Id =0, name = "სხვა" });
+            ViewBag.ParentCategoryId = new SelectList(list, "Id", "Name", result.parentId);
+
             var customCategory = new CategoriesCustomClass()
             {
                 Name = result.name,
                 Id = result.Id,
-                ParentCategoriesId=result.parentId
+                ParentId = result.parentId
             };
             return View(customCategory);
         }
 
-        
+
         //// POST: Categories/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditCategories(CategoriesCustomClass model)
         {
-            var list = _db.parentCategories.ToList();
-            
+            var list = _db.categories.ToList();
             ViewBag.ParentId = new SelectList(list, "Id", "Name");
+
             if (ModelState.IsValid)
             {
                 CategoriesData.EditCategories(model);
@@ -257,6 +281,9 @@ namespace HowToWebApplication.Controllers
             }
             return View(model);
         }
+
+
+
 
         // GET: Categories/Delete/5
         public ActionResult DeleteCategories(int id)
@@ -301,118 +328,118 @@ namespace HowToWebApplication.Controllers
         #endregion
 
         #region Parent Categories
-        // GET: Categories
+        //// GET: Categories
 
-        public ActionResult ParentCategoriesList()
-        {
-            var result = ParentCategoriesData.AllParentCategories();
-            return View(result);
-        }
-
-
-        // GET: Categories/Details/5
-        public ActionResult ParentCategoriesDetails(int id)
-        {
-            var result = ParentCategoriesData.GetParentCategoriesById(id);
-
-            if (result == null)
-            {
-                return HttpNotFound();
-            }
-            return View(result);
-        }
-
-        // GET: Categories/Create
-        public ActionResult CreateParentCategories()
-        { 
-            return View();
-        }
-
-        // POST: Categories/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateParentCategories(ParentCategoriesCustomClass model)
-        {
-           
-            if (ModelState.IsValid)
-            {
-                ParentCategoriesData.CreateParentCategories(model);
-                return RedirectToAction("ParentCategoriesList");
-            }
-            else
-            {
-
-                return View(model);
-            }
-        }
-
-        //// GET: Categories/Edit/5
-        public ActionResult EditParentCategories(int id)
-        {
-            var result = ParentCategoriesData.GetParentCategoriesById(id);
-            
-            var customCategory = new ParentCategoriesCustomClass()
-            {
-                Name = result.name,
-                Id = result.Id,  
-            };
-            return View(customCategory);
-        }
+        //public ActionResult ParentCategoriesList()
+        //{
+        //    var result = ParentCategoriesData.AllParentCategories();
+        //    return View(result);
+        //}
 
 
-        //// POST: Categories/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditParentCategories(ParentCategoriesCustomClass model)
-        {
-            
-            if (ModelState.IsValid)
-            {
-                ParentCategoriesData.EditParentCategories(model);
-                return RedirectToAction("ParentCategoriesList");
-            }
-            return View(model);
-        }
+        //// GET: Categories/Details/5
+        //public ActionResult ParentCategoriesDetails(int id)
+        //{
+        //    var result = ParentCategoriesData.GetParentCategoriesById(id);
 
-        // GET: Categories/Delete/5
-        public ActionResult DeleteParentCategories(int id)
-        {
-            var result = ParentCategoriesData.GetParentCategoriesById(id);
-            if (result == null)
-            {
-                return HttpNotFound();
-            }
-            return View(result);
-        }
+        //    if (result == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(result);
+        //}
 
-        //POST: Categories/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteParentCategories(parentCategories model)
-        {
-            try
-            {
-                ParentCategoriesData.FullDeleteParentCategories(model);
-            }
-            catch
-            {
-                return View(model);
-            }
-            return RedirectToAction("ParentCategoriesList");
-        }
+        //// GET: Categories/Create
+        //public ActionResult CreateParentCategories()
+        //{ 
+        //    return View();
+        //}
+
+        //// POST: Categories/Create
+        //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(categories model)
+        //public ActionResult CreateParentCategories(ParentCategoriesCustomClass model)
+        //{
+           
+        //    if (ModelState.IsValid)
+        //    {
+        //        ParentCategoriesData.CreateParentCategories(model);
+        //        return RedirectToAction("ParentCategoriesList");
+        //    }
+        //    else
+        //    {
+
+        //        return View(model);
+        //    }
+        //}
+
+        ////// GET: Categories/Edit/5
+        //public ActionResult EditParentCategories(int id)
+        //{
+        //    var result = ParentCategoriesData.GetParentCategoriesById(id);
+            
+        //    var customCategory = new ParentCategoriesCustomClass()
+        //    {
+        //        Name = result.name,
+        //        Id = result.Id,  
+        //    };
+        //    return View(customCategory);
+        //}
+
+
+        ////// POST: Categories/Edit/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult EditParentCategories(ParentCategoriesCustomClass model)
+        //{
+            
+        //    if (ModelState.IsValid)
+        //    {
+        //        ParentCategoriesData.EditParentCategories(model);
+        //        return RedirectToAction("ParentCategoriesList");
+        //    }
+        //    return View(model);
+        //}
+
+        //// GET: Categories/Delete/5
+        //public ActionResult DeleteParentCategories(int id)
+        //{
+        //    var result = ParentCategoriesData.GetParentCategoriesById(id);
+        //    if (result == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(result);
+        //}
+
+        ////POST: Categories/Delete/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteParentCategories(parentCategories model)
         //{
         //    try
         //    {
-        //        UserData.deleteCategories(model);
+        //        ParentCategoriesData.FullDeleteParentCategories(model);
         //    }
         //    catch
         //    {
         //        return View(model);
         //    }
-        //    return RedirectToAction("index");
+        //    return RedirectToAction("ParentCategoriesList");
         //}
+        ////[ValidateAntiForgeryToken]
+        ////public ActionResult Delete(categories model)
+        ////{
+        ////    try
+        ////    {
+        ////        UserData.deleteCategories(model);
+        ////    }
+        ////    catch
+        ////    {
+        ////        return View(model);
+        ////    }
+        ////    return RedirectToAction("index");
+        ////}
 
         #endregion
 

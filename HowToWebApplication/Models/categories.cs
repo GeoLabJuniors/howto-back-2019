@@ -18,6 +18,7 @@ namespace HowToWebApplication.Models
         public categories()
         {
             this.articleCategories = new HashSet<articleCategories>();
+            this.categories1 = new HashSet<categories>();
         }
     
         public int Id { get; set; }
@@ -26,6 +27,8 @@ namespace HowToWebApplication.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<articleCategories> articleCategories { get; set; }
-        public virtual parentCategories parentCategories { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<categories> categories1 { get; set; }
+        public virtual categories categories2 { get; set; }
     }
 }
