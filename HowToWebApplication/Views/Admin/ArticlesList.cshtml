@@ -1,0 +1,177 @@
+﻿@model IEnumerable<HowToWebApplication.Models.articles>
+<head>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+</head>
+
+<p>
+    @Html.ActionLink("Create New", "CreateArticles")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.isBlocked)
+        </th>
+        <th>
+            Author
+        </th>
+        <th>
+            rating
+        </th>
+        <th>
+            categories
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.isBlocked)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.users.name)  @Html.DisplayFor(modelItem => item.users.surname)
+            </td>
+            <td>
+
+                @if (item.ratings.Count() != 0)
+                {
+
+                    @Html.DisplayFor(modelItem => item.ratings.Average(e => e.rating))
+                    break;
+                }
+                else
+                {
+                    <p>---------</p>
+                }
+
+            </td>
+            <!--გამოსაცდელია-->
+            <td>
+                @foreach (var cat in item.articleCategories)
+                {
+                    foreach (var category in ViewBag.Categories)
+                    {
+                        if (cat.categoriesId == category.Id)
+                        {
+                            <p>@category.name</p>
+                        }
+                    }
+                }
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "EditArticles", new { id = item.Id }) |
+                @Html.ActionLink("Details", "ArticlesDetails", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "DeleteArticle", new { id = item.Id }) |
+                @if (item.isBlocked == false)
+                {
+
+
+                    @Html.ActionLink("Block", "BlockArticle", new { id = item.Id }, new { @class = "block-link" })
+                }
+                else
+                {
+
+
+                    @Html.ActionLink("Unblock", "UnBlockArticle", new { id = item.Id }, new { @class = "Unblock-link" })
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+<div id="block-dialog" title="Confirmation">
+    <p>Are you sure you want to block this article?</p>
+</div>
+
+
+<div id="Unblock-dialog" title="Confirmation">
+    <p>Are you sure you want to Unblock this article?</p>
+</div>
+
+<script type="text/javascript">
+
+    var BlockLinkObj;
+    // block Link
+    $(".block-link").click(function () {
+        BlockLinkObj = $(this);  //for future use
+        $('#block-dialog').dialog('open');
+        return false; // prevents the default behaviour
+    });
+
+
+    $('#block-dialog').dialog({
+        autoOpen: false, width: 400, resizable: false, modal: true, //Dialog options
+        buttons: {
+            "Continue": function () {
+                $.post(BlockLinkObj[0].href, function (data) {  //Post to action
+                    if (data == '<%= Boolean.TrueString %>') {
+                        BlockLinkObj.closest("tr").hide('fast'); //Hide Row
+                        
+                        //(optional) Display Confirmation
+                    }
+                    else {
+                        //(optional) Display Error
+                    }
+                });
+                $(this).dialog("close");
+                location.reload();
+            },
+            "Cancel": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    var BlockLinkObj;
+    // block Link
+    $(".Unblock-link").click(function () {
+        BlockLinkObj = $(this);  //for future use
+        $('#Unblock-dialog').dialog('open');
+        return false; // prevents the default behaviour
+    });
+
+
+    $('#Unblock-dialog').dialog({
+        autoOpen: false, width: 400, resizable: false, modal: true, //Dialog options
+        buttons: {
+            "Continue": function () {
+                $.post(BlockLinkObj[0].href, function (data) {  //Post to action
+                    if (data == '<%= Boolean.TrueString %>') {
+                        BlockLinkObj.closest("tr").hide('fast'); //Hide Row
+                        
+                        //(optional) Display Confirmation
+                    }
+                    else {
+                        //(optional) Display Error
+                    }
+                });
+                $(this).dialog("close");
+                location.reload();
+            },
+            "Cancel": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>

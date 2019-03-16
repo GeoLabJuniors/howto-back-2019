@@ -80,6 +80,7 @@ namespace HowToWebApplication.Controllers
                 {
                     LoginHelper.CreateUser(new users()
                     {
+                        Id= dataProvider.LoginCategory(user).Id,
                         password = user.Password,
                         email = user.Email,
                         categoriesId = dataProvider.LoginCategory(user).categoriesId

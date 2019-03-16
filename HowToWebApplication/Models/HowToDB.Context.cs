@@ -33,12 +33,11 @@ namespace HowToWebApplication.Models
         public virtual DbSet<images> images { get; set; }
         public virtual DbSet<ratings> ratings { get; set; }
         public virtual DbSet<requests> requests { get; set; }
+        public virtual DbSet<requestsArticles> requestsArticles { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tags> tags { get; set; }
         public virtual DbSet<users> users { get; set; }
         public virtual DbSet<usersCategories> usersCategories { get; set; }
         public virtual DbSet<websiteInfos> websiteInfos { get; set; }
-
-        public System.Data.Entity.DbSet<HowToWebApplication.Models.CategoriesCustomClass> CategoriesCustomClasses { get; set; }
     }
 }

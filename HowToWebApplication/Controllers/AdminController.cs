@@ -10,13 +10,14 @@ using HowToWebApplication.Filters;
 
 namespace HowToWebApplication.Controllers
 {
-    [AdminFilter]
+    //[AdminFilter]
     public class AdminController : Controller
     {
         HowToDbEntities _db = new HowToDbEntities();
         UsersDataProvider UserData = new UsersDataProvider();
         CategoriesDataProvider CategoriesData = new CategoriesDataProvider();
-        
+        ArticlesDataProvider ArticlesData = new ArticlesDataProvider();
+        RequestsDataProvider RequestData = new RequestsDataProvider();
 
         public ActionResult Index()
         {
@@ -327,21 +328,176 @@ namespace HowToWebApplication.Controllers
 
         #endregion
 
-        #region Parent Categories
-        //// GET: Categories
+        #region Articles
+        // GET: Articles
 
-        //public ActionResult ParentCategoriesList()
+        public ActionResult ArticlesList()
+        {
+            ViewBag.Categories = _db.categories.ToList();
+            var result = ArticlesData.AllArticles();
+            return View(result);
+        }
+
+
+        // GET: Articles/Details/5
+        public ActionResult ArticlesDetails(int id)
+        {
+            
+                var articleResult = _db.requestsArticles.Where(e => e.articlesId == id).ToList();
+                if(articleResult.Count() != 0) {
+                var requests = new List<requests>();
+                foreach(var req in _db.requests)
+                {
+                    foreach(var artReq in articleResult)
+                    {
+                        if (req.Id == artReq.requestsId)
+                        {
+                            requests.Add(req);
+                        }
+                    }
+                }
+              
+                if (requests != null)
+                {                   
+                    ViewBag.RequestIDs = requests;
+                }
+            }
+            ViewBag.Categories = _db.categories.ToList();
+            var result = ArticlesData.GetArticlesById(id);
+
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+            return View(result);
+        }
+
+        // GET: Articles/Create
+        public ActionResult CreateArticles()
+        {
+            ViewBag.Categories = _db.categories.ToList();
+            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
+            ViewBag.Requests = _db.requests.ToList();
+            return View();
+        }
+
+        // POST: Articles/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateArticles(ArticlesCustomClass model, HttpPostedFileBase[] images)
+        {
+            ViewBag.Categories = _db.categories.ToList();
+            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
+            //ViewBag.RequestId = new SelectList(_db.requests.ToList(), "Id", "title");
+            ViewBag.Requests = _db.requests.ToList();
+            if (ModelState.IsValid)
+            {
+                ArticlesData.CreateArticles(model, images);
+                return RedirectToAction("ArticlesList");
+            }
+            else
+            {
+                return View(model);
+            }
+        }
+
+        //// GET: Articles/Edit/5
+        public ActionResult EditArticles(int id)
+        {
+            ViewBag.Images = _db.images.Where(e => e.articlesId == id); 
+            ViewBag.ImagesCount = _db.images.Where(e => e.articlesId == id).Count();
+            var result = ArticlesData.GetArticlesById(id);
+            ViewBag.Categories = _db.categories.ToList();
+            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email", result.usersId);
+            ViewBag.Requests = _db.requests.ToList();
+
+
+            //var categoryResult = _db.articleCategories.Where(e => e.articlesId == id).ToList();
+            //var CategoryIDResult = _db.articleCategories.Where(e => e.articlesId == result.Id).ToList();          
+            //int[] CategoriesIDs = categoryResult.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+            //ViewBag.Categories = new MultiSelectList(_db.categories.ToList(), "Id", "email", CategoryIDResult)
+
+            var customArticle = new ArticlesCustomClass()
+            {
+            Id = result.Id,
+            Title =  result.title,
+            Content=  result.content,  
+            UsersId = result.usersId,
+             };
+            return View(customArticle);
+       }
+
+
+        //// POST: Articles/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditArticles(ArticlesCustomClass model)
+        {
+       
+            if (ModelState.IsValid)
+            {
+                ArticlesData.EditArticles(model);
+                return RedirectToAction("ArticlesList");
+            }
+            return View(model);
+        }
+
+
+
+
+        // GET: Articles/Delete/5
+        public ActionResult DeleteArticle(int id)
+        {
+            ViewBag.Categories = _db.categories.ToList();
+            var result = ArticlesData.GetArticlesById(id);
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+            return View(result);
+        }
+
+        //POST: Article/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteArticle(articles model)
+        {
+
+            try
+            {
+                ArticlesData.FullDeleteArticle(model);
+            }
+            catch
+            {
+                return View(model);
+            }
+            return RedirectToAction("ArticlesList");
+        }
+
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult DeleteImages(int id)
+        {
+            var articleIds = _db.articles.FirstOrDefault(e => e.Id == id);
+            var result = _db.images.FirstOrDefault(e => e.articlesId == articleIds.Id);
+            try
+            {
+                ArticlesData.DeleteImages(result);
+            }
+            catch
+            {
+                return View(result);
+            }
+            return RedirectToAction("ArticlesList");
+        }
+
+
+        //// GET: Articles/block/5
+        //public ActionResult BlockArticle()
         //{
-        //    var result = ParentCategoriesData.AllParentCategories();
-        //    return View(result);
-        //}
-
-
-        //// GET: Categories/Details/5
-        //public ActionResult ParentCategoriesDetails(int id)
-        //{
-        //    var result = ParentCategoriesData.GetParentCategoriesById(id);
-
+        //    ViewBag.Categories = _db.categories.ToList();
+        //    var result = ArticlesData.GetArticlesById(id);
         //    if (result == null)
         //    {
         //        return HttpNotFound();
@@ -349,100 +505,186 @@ namespace HowToWebApplication.Controllers
         //    return View(result);
         //}
 
-        //// GET: Categories/Create
-        //public ActionResult CreateParentCategories()
-        //{ 
-        //    return View();
-        //}
+        //POST: Categories/block/5
+        [HttpPost]
+       
+        public ActionResult BlockArticle(int id)
+        {
 
-        //// POST: Categories/Create
-        //[HttpPost]
+            try
+            {
+                ArticlesData.BlockArticle(id);
+                return Content(Boolean.TrueString);
+            }
+            catch
+            {
+                //return View(model);
+                return Content(Boolean.FalseString);
+            }
+            //return RedirectToAction("ArticlesList");
+        }
+
+
+        //POST: Categories/block/5
+        [HttpPost]
+
+        public ActionResult UnBlockArticle(int id)
+        {
+
+            try
+            {
+                ArticlesData.UnBlockArticle(id);
+                return Content(Boolean.TrueString);
+            }
+            catch
+            {
+                //return View(model);
+                return Content(Boolean.FalseString);
+            }
+            //return RedirectToAction("ArticlesList");
+        }
+
+        #endregion
+
+
+        #region Requests
+        // GET: Requests
+
+        public ActionResult RequestsList()
+        {
+            ViewBag.Categories = _db.categories.ToList();
+            var result = RequestData.AllRequest();
+            return View(result);
+        }
+
+
+        // GET: Articles/Details/5
+        public ActionResult RequestsDetails(int id)
+        {
+            var articleResult = _db.requestsArticles.FirstOrDefault(e => e.requestsId == id);
+            var articleIds= _db.articles.Where(e => e.Id == articleResult.articlesId).Count();
+            if (articleIds != 0)
+            {
+                ViewBag.ArticleID = _db.articles.FirstOrDefault(e => e.Id == articleResult.articlesId).Id;
+            }
+            ViewBag.Categories = _db.categories.ToList();
+            var result = RequestData.GetRequestById(id);
+
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+            return View(result);
+        }
+
+        // GET: Articles/Create
+        public ActionResult CreateRequests()
+        { 
+            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
+            return View();
+        }
+
+        // POST: Requests/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateRequests(RequestsCustomClass model)
+        {        
+            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
+            if (ModelState.IsValid)
+            {
+                RequestData.CreateRequest(model);
+                return RedirectToAction("RequestsList");
+            }
+            else
+            {
+                return View(model);
+            }
+        }
+
+        //// GET: Requests/Edit/5
+        public ActionResult EditRequests(int id)
+        {
+
+            var result = RequestData.GetRequestById(id);
+            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email", result.usersId);
+
+            var customRequest = new RequestsCustomClass()
+            {   
+                Title= result.title,
+                Content = result.content,
+                IsDone = result.isDone,
+                Upvote=result.upvote,   
+                UsersId = result.usersId,
+
+            };
+            return View(customRequest);
+        }
+
+
+        //// POST: Requests/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditRequests(RequestsCustomClass model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                RequestData.EditRequest(model);
+                return RedirectToAction("RequestsList");
+            }
+            return View(model);
+        }
+
+
+
+
+        // GET: Requests/Delete/5
+        public ActionResult DeleteRequests(int id)
+        {
+            ViewBag.Categories = _db.categories.ToList();
+            var result = RequestData.GetRequestById(id);
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+            return View(result);
+        }
+
+        //POST: Requests/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteRequests(requests model)
+        {
+
+            try
+            {
+                RequestData.FullDeleteRequest(model);
+            }
+            catch
+            {
+                return View(model);
+            }
+            return RedirectToAction("RequestsList");
+        }
+
+      
+
+
         //[ValidateAntiForgeryToken]
-        //public ActionResult CreateParentCategories(ParentCategoriesCustomClass model)
-        //{
-           
-        //    if (ModelState.IsValid)
-        //    {
-        //        ParentCategoriesData.CreateParentCategories(model);
-        //        return RedirectToAction("ParentCategoriesList");
-        //    }
-        //    else
-        //    {
-
-        //        return View(model);
-        //    }
-        //}
-
-        ////// GET: Categories/Edit/5
-        //public ActionResult EditParentCategories(int id)
-        //{
-        //    var result = ParentCategoriesData.GetParentCategoriesById(id);
-            
-        //    var customCategory = new ParentCategoriesCustomClass()
-        //    {
-        //        Name = result.name,
-        //        Id = result.Id,  
-        //    };
-        //    return View(customCategory);
-        //}
-
-
-        ////// POST: Categories/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult EditParentCategories(ParentCategoriesCustomClass model)
-        //{
-            
-        //    if (ModelState.IsValid)
-        //    {
-        //        ParentCategoriesData.EditParentCategories(model);
-        //        return RedirectToAction("ParentCategoriesList");
-        //    }
-        //    return View(model);
-        //}
-
-        //// GET: Categories/Delete/5
-        //public ActionResult DeleteParentCategories(int id)
-        //{
-        //    var result = ParentCategoriesData.GetParentCategoriesById(id);
-        //    if (result == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(result);
-        //}
-
-        ////POST: Categories/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult DeleteParentCategories(parentCategories model)
+        //public ActionResult Delete(articles model)
         //{
         //    try
         //    {
-        //        ParentCategoriesData.FullDeleteParentCategories(model);
+        //        ArticlesData.deleteCategories(model);
         //    }
         //    catch
         //    {
         //        return View(model);
         //    }
-        //    return RedirectToAction("ParentCategoriesList");
+        //    return RedirectToAction("index");
         //}
-        ////[ValidateAntiForgeryToken]
-        ////public ActionResult Delete(categories model)
-        ////{
-        ////    try
-        ////    {
-        ////        UserData.deleteCategories(model);
-        ////    }
-        ////    catch
-        ////    {
-        ////        return View(model);
-        ////    }
-        ////    return RedirectToAction("index");
-        ////}
 
         #endregion
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="HowToDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="HowToDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="articleCategories">
           <Key>
             <PropertyRef Name="Id" />
@@ -22,7 +22,6 @@
           <Property Name="content" Type="nvarchar(max)" Nullable="false" />
           <Property Name="date" Type="datetime" Nullable="false" />
           <Property Name="isBlocked" Type="bit" Nullable="false" />
-          <Property Name="isRequested" Type="bit" Nullable="false" />
           <Property Name="usersId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="articlesTags">
@@ -54,7 +53,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="name" Type="nvarchar(max)" />
           <Property Name="url" Type="nvarchar(max)" Nullable="false" />
           <Property Name="articlesId" Type="int" />
           <Property Name="usersId" Type="int" />
@@ -73,11 +72,21 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="title" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="number" Type="int" Nullable="false" />
           <Property Name="content" Type="nvarchar(max)" Nullable="false" />
           <Property Name="upvote" Type="int" Nullable="false" />
           <Property Name="isDone" Type="bit" Nullable="false" />
-          <Property Name="usersId" Type="int" />
+          <Property Name="usersId" Type="int" Nullable="false" />
+          <Property Name="date" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="requestsArticles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="requestsId" Type="int" />
+          <Property Name="articlesId" Type="int" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -274,7 +283,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_requests_users">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="users" Type="Self.users" Multiplicity="1" />
           <End Role="requests" Type="Self.requests" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
@@ -282,6 +291,30 @@
             </Principal>
             <Dependent Role="requests">
               <PropertyRef Name="usersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_requestsArticles_articles">
+          <End Role="articles" Type="Self.articles" Multiplicity="0..1" />
+          <End Role="requestsArticles" Type="Self.requestsArticles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="articles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="requestsArticles">
+              <PropertyRef Name="articlesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_requestsArticles_requests">
+          <End Role="requests" Type="Self.requests" Multiplicity="0..1" />
+          <End Role="requestsArticles" Type="Self.requestsArticles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="requests">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="requestsArticles">
+              <PropertyRef Name="requestsId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -306,6 +339,7 @@
           <EntitySet Name="images" EntityType="Self.images" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ratings" EntityType="Self.ratings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="requests" EntityType="Self.requests" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="requestsArticles" EntityType="Self.requestsArticles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tags" EntityType="Self.tags" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
@@ -363,13 +397,20 @@
             <End Role="users" EntitySet="users" />
             <End Role="requests" EntitySet="requests" />
           </AssociationSet>
+          <AssociationSet Name="FK_requestsArticles_articles" Association="Self.FK_requestsArticles_articles">
+            <End Role="articles" EntitySet="articles" />
+            <End Role="requestsArticles" EntitySet="requestsArticles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_requestsArticles_requests" Association="Self.FK_requestsArticles_requests">
+            <End Role="requests" EntitySet="requests" />
+            <End Role="requestsArticles" EntitySet="requestsArticles" />
+          </AssociationSet>
           <AssociationSet Name="FK_users_usersCategories" Association="Self.FK_users_usersCategories">
             <End Role="usersCategories" EntitySet="usersCategories" />
             <End Role="users" EntitySet="users" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="HowToDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -392,7 +433,6 @@
           <Property Name="content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="date" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="isBlocked" Type="Boolean" Nullable="false" />
-          <Property Name="isRequested" Type="Boolean" Nullable="false" />
           <Property Name="usersId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="articleCategories" Relationship="Self.FK_articleCategories_articles" FromRole="articles" ToRole="articleCategories" />
           <NavigationProperty Name="users" Relationship="Self.FK_articles_users" FromRole="articles" ToRole="users" />
@@ -400,6 +440,7 @@
           <NavigationProperty Name="favourites" Relationship="Self.FK_favourites_articles" FromRole="articles" ToRole="favourites" />
           <NavigationProperty Name="images" Relationship="Self.FK_media_articles" FromRole="articles" ToRole="images" />
           <NavigationProperty Name="ratings" Relationship="Self.FK_ratings_articles" FromRole="articles" ToRole="ratings" />
+          <NavigationProperty Name="requestsArticles" Relationship="Self.FK_requestsArticles_articles" FromRole="articles" ToRole="requestsArticles" />
         </EntityType>
         <EntityType Name="articlesTags">
           <Key>
@@ -437,7 +478,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="articlesId" Type="Int32" />
           <Property Name="usersId" Type="Int32" />
@@ -460,12 +501,25 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="number" Type="Int32" Nullable="false" />
           <Property Name="content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="upvote" Type="Int32" Nullable="false" />
           <Property Name="isDone" Type="Boolean" Nullable="false" />
-          <Property Name="usersId" Type="Int32" />
+          <Property Name="usersId" Type="Int32" Nullable="false" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="users" Relationship="Self.FK_requests_users" FromRole="requests" ToRole="users" />
+          <NavigationProperty Name="requestsArticles" Relationship="Self.FK_requestsArticles_requests" FromRole="requests" ToRole="requestsArticles" />
+        </EntityType>
+        <EntityType Name="requestsArticles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="requestsId" Type="Int32" />
+          <Property Name="articlesId" Type="Int32" />
+          <NavigationProperty Name="articles" Relationship="Self.FK_requestsArticles_articles" FromRole="requestsArticles" ToRole="articles" />
+          <NavigationProperty Name="requests" Relationship="Self.FK_requestsArticles_requests" FromRole="requestsArticles" ToRole="requests" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -609,6 +663,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_requestsArticles_articles">
+          <End Role="articles" Type="Self.articles" Multiplicity="0..1" />
+          <End Role="requestsArticles" Type="Self.requestsArticles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="articles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="requestsArticles">
+              <PropertyRef Name="articlesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_articlesTags_tags">
           <End Role="tags" Type="Self.tags" Multiplicity="1" />
           <End Role="articlesTags" Type="Self.articlesTags" Multiplicity="*" />
@@ -670,7 +736,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_requests_users">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="users" Type="Self.users" Multiplicity="1" />
           <End Role="requests" Type="Self.requests" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
@@ -678,6 +744,18 @@
             </Principal>
             <Dependent Role="requests">
               <PropertyRef Name="usersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_requestsArticles_requests">
+          <End Role="requests" Type="Self.requests" Multiplicity="0..1" />
+          <End Role="requestsArticles" Type="Self.requestsArticles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="requests">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="requestsArticles">
+              <PropertyRef Name="requestsId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -702,6 +780,7 @@
           <EntitySet Name="images" EntityType="Self.images" />
           <EntitySet Name="ratings" EntityType="Self.ratings" />
           <EntitySet Name="requests" EntityType="Self.requests" />
+          <EntitySet Name="requestsArticles" EntityType="Self.requestsArticles" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="tags" EntityType="Self.tags" />
           <EntitySet Name="users" EntityType="Self.users" />
@@ -735,6 +814,10 @@
             <End Role="articles" EntitySet="articles" />
             <End Role="ratings" EntitySet="ratings" />
           </AssociationSet>
+          <AssociationSet Name="FK_requestsArticles_articles" Association="Self.FK_requestsArticles_articles">
+            <End Role="articles" EntitySet="articles" />
+            <End Role="requestsArticles" EntitySet="requestsArticles" />
+          </AssociationSet>
           <AssociationSet Name="FK_articlesTags_tags" Association="Self.FK_articlesTags_tags">
             <End Role="tags" EntitySet="tags" />
             <End Role="articlesTags" EntitySet="articlesTags" />
@@ -758,6 +841,10 @@
           <AssociationSet Name="FK_requests_users" Association="Self.FK_requests_users">
             <End Role="users" EntitySet="users" />
             <End Role="requests" EntitySet="requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_requestsArticles_requests" Association="Self.FK_requestsArticles_requests">
+            <End Role="requests" EntitySet="requests" />
+            <End Role="requestsArticles" EntitySet="requestsArticles" />
           </AssociationSet>
           <AssociationSet Name="FK_users_usersCategories" Association="Self.FK_users_usersCategories">
             <End Role="usersCategories" EntitySet="usersCategories" />
@@ -787,7 +874,6 @@
                 <ScalarProperty Name="content" ColumnName="content" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="isBlocked" ColumnName="isBlocked" />
-                <ScalarProperty Name="isRequested" ColumnName="isRequested" />
                 <ScalarProperty Name="usersId" ColumnName="usersId" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -844,11 +930,22 @@
             <EntityTypeMapping TypeName="HowToDbModel.requests">
               <MappingFragment StoreEntitySet="requests">
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="title" ColumnName="title" />
                 <ScalarProperty Name="number" ColumnName="number" />
                 <ScalarProperty Name="content" ColumnName="content" />
                 <ScalarProperty Name="upvote" ColumnName="upvote" />
                 <ScalarProperty Name="isDone" ColumnName="isDone" />
                 <ScalarProperty Name="usersId" ColumnName="usersId" />
+                <ScalarProperty Name="date" ColumnName="date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="requestsArticles">
+            <EntityTypeMapping TypeName="HowToDbModel.requestsArticles">
+              <MappingFragment StoreEntitySet="requestsArticles">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="requestsId" ColumnName="requestsId" />
+                <ScalarProperty Name="articlesId" ColumnName="articlesId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

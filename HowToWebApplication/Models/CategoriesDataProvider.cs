@@ -29,7 +29,7 @@ namespace HowToWebApplication.Models
                 _db.categories.Add(new categories()
                 {
                     name = category.Name,
-                    Id = category.Id,
+                    //Id = category.Id,
                     parentId=category.ParentId
                 });
             }
@@ -49,13 +49,13 @@ namespace HowToWebApplication.Models
         }
 
 
-        ////Delete
-        ////public void deleteCategories(Users user)
-        ////{
-        ////    var result = _db.Users.FirstOrDefault(e => e.Id == user.Id);
-        ////    result.IsActive = false;
-        ////    _db.SaveChanges();
-        ////}
+        //Delete
+        //public void deleteCategories(Users user)
+        //{
+        //    var result = _db.Users.FirstOrDefault(e => e.Id == user.Id);
+        //    result.IsActive = false;
+        //    _db.SaveChanges();
+        //}
 
 
         public void FullDeleteCategories(categories category)

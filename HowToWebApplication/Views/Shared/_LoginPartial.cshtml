@@ -23,7 +23,7 @@ else if (LoginHelper.IsLoggedIn())
 
         <ul class="nav navbar-nav navbar-right">
             <li>
-                @Html.ActionLink("Hello " + LoginHelper.CurrentUser().email + "!", "Details", "User", new { id = LoginHelper.CurrentUser().Id }, null)
+                @Html.ActionLink("Hello " + LoginHelper.CurrentUser().email + "!", "UserDetails", "Users", new { id = LoginHelper.CurrentUser().Id }, null)
             </li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()"> Log off</a></li>
         </ul>
