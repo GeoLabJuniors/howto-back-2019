@@ -57,6 +57,7 @@
           <Property Name="url" Type="nvarchar(max)" Nullable="false" />
           <Property Name="articlesId" Type="int" />
           <Property Name="usersId" Type="int" />
+          <Property Name="isMain" Type="bit" />
         </EntityType>
         <EntityType Name="ratings">
           <Key>
@@ -73,7 +74,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="title" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="number" Type="int" Nullable="false" />
+          <Property Name="number" Type="int" />
           <Property Name="content" Type="nvarchar(max)" Nullable="false" />
           <Property Name="upvote" Type="int" Nullable="false" />
           <Property Name="isDone" Type="bit" Nullable="false" />
@@ -484,6 +485,7 @@
           <Property Name="usersId" Type="Int32" />
           <NavigationProperty Name="articles" Relationship="Self.FK_media_articles" FromRole="images" ToRole="articles" />
           <NavigationProperty Name="users" Relationship="Self.FK_media_users" FromRole="images" ToRole="users" />
+          <Property Name="isMain" Type="Boolean" />
         </EntityType>
         <EntityType Name="ratings">
           <Key>
@@ -502,7 +504,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="number" Type="Int32" Nullable="false" />
+          <Property Name="number" Type="Int32" />
           <Property Name="content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="upvote" Type="Int32" Nullable="false" />
           <Property Name="isDone" Type="Boolean" Nullable="false" />
@@ -908,6 +910,7 @@
           <EntitySetMapping Name="images">
             <EntityTypeMapping TypeName="HowToDbModel.images">
               <MappingFragment StoreEntitySet="images">
+                <ScalarProperty Name="isMain" ColumnName="isMain" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="url" ColumnName="url" />

@@ -121,18 +121,20 @@ namespace HowToWebApplication.Controllers
             ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email", result.usersId);
             ViewBag.Requests = _db.requests.ToList();
 
-
-            //var categoryResult = _db.articleCategories.Where(e => e.articlesId == id).ToList();
-            //var CategoryIDResult = _db.articleCategories.Where(e => e.articlesId == result.Id).ToList();          
-            //int[] CategoriesIDs = categoryResult.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
-            //ViewBag.Categories = new MultiSelectList(_db.categories.ToList(), "Id", "email", CategoryIDResult)
+            //ამ ცვლადში ვპოულობთ უკვე დამატებულ კატეგორიებს და ვაკონვერტირებთ მასივში
+            var SelectedCategories = ArticlesData.GetSelectedCatagories(id).Select(e => e.categoriesId).ToArray();
+            TempData["PrevSelectedCategories"] = SelectedCategories;// Post-ის edit-თვის გადასაცემი კატეგორიების 
+            //ამ ცვლადში ვპოულობთ უკვე დამატებულ მოთხოვნებს და ვაკონვერტირებთ მასივში          
+            List<int> Selectedrequests = ArticlesData.GetSelectedRequest(id).Select(e => (int)e.requestsId).ToList();
+            TempData["PrevSelectedRequests"] = Selectedrequests;// Post-ის edit-თვის გადასაცემი მოთხოვნების სია
 
             var customArticle = new ArticlesCustomClass()
             {
                 Id = result.Id,
                 Title = result.title,
                 Content = result.content,
-                UsersId = result.usersId,
+                CategoriesList = SelectedCategories,
+                RequestsList = Selectedrequests
             };
             return View(customArticle);
         }
@@ -141,18 +143,29 @@ namespace HowToWebApplication.Controllers
         //// POST: Articles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditArticles(ArticlesCustomClass model)
+        public ActionResult EditArticles(ArticlesCustomClass model, HttpPostedFileBase[] images)
         {
+            var result = _db.articles.FirstOrDefault(e => e.Id == model.Id);
+            ViewBag.Categories = _db.categories.ToList();
+
+            // იმ კატეგორიების წასაშლელი კოდი, რომელიც მომხმარებელმა მულტისელექტლისტიდან ამოშალა
+            if (model.CategoriesList != null)
+            {
+                var PrevSelectedCategories = TempData["PrevSelectedCategories"] as IEnumerable<int>;
+                ArticlesData.DeleteUnselectedCategories(model, PrevSelectedCategories);
+
+            }
+            // იმ მოთხოვნების წასაშლელი კოდი, რომელიც მომხმარებელმა მულტისელექტლისტიდან ამოშალა          
+            var PrevSelectedRequests = TempData["PrevSelectedRequests"] as IEnumerable<int>;
+            ArticlesData.DeleteUnselectedRequest(model, PrevSelectedRequests);
 
             if (ModelState.IsValid)
             {
-                ArticlesData.EditArticles(model);
+                ArticlesData.EditArticles(model,images);
                 return RedirectToAction("ArticlesList", "Users", new { id = LoginHelper.CurrentUser().Id });
             }
             return View(model);
         }
-
-
 
 
         // GET: Articles/Delete/5
@@ -272,9 +285,9 @@ namespace HowToWebApplication.Controllers
             {
                 Title = result.title,
                 Content = result.content,
-                IsDone = result.isDone,
-                Upvote = result.upvote,
-                UsersId = result.usersId,
+                //IsDone = result.isDone,
+                //Upvote = result.upvote,
+                //UsersId = result.usersId,
 
             };
             return View(customRequest);

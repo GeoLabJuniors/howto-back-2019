@@ -333,6 +333,7 @@ namespace HowToWebApplication.Controllers
 
         public ActionResult ArticlesList()
         {
+           
             ViewBag.Categories = _db.categories.ToList();
             var result = ArticlesData.AllArticles();
             return View(result);
@@ -376,7 +377,7 @@ namespace HowToWebApplication.Controllers
         public ActionResult CreateArticles()
         {
             ViewBag.Categories = _db.categories.ToList();
-            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
+            //ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
             ViewBag.Requests = _db.requests.ToList();
             return View();
         }
@@ -387,12 +388,15 @@ namespace HowToWebApplication.Controllers
         public ActionResult CreateArticles(ArticlesCustomClass model, HttpPostedFileBase[] images)
         {
             ViewBag.Categories = _db.categories.ToList();
-            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
+            //ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email");
             //ViewBag.RequestId = new SelectList(_db.requests.ToList(), "Id", "title");
             ViewBag.Requests = _db.requests.ToList();
+            
+            
             if (ModelState.IsValid)
             {
                 ArticlesData.CreateArticles(model, images);
+                
                 return RedirectToAction("ArticlesList");
             }
             else
@@ -407,23 +411,27 @@ namespace HowToWebApplication.Controllers
             ViewBag.Images = _db.images.Where(e => e.articlesId == id); 
             ViewBag.ImagesCount = _db.images.Where(e => e.articlesId == id).Count();
             var result = ArticlesData.GetArticlesById(id);
-            ViewBag.Categories = _db.categories.ToList();
-            ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email", result.usersId);
+            ViewBag.Categories = _db.categories.ToList();   
+            //ViewBag.UserId = new SelectList(_db.users.ToList(), "Id", "email", result.usersId);
             ViewBag.Requests = _db.requests.ToList();
 
+            //ამ ცვლადში ვპოულობთ უკვე დამატებულ კატეგორიებს და ვაკონვერტირებთ მასივში
+            var SelectedCategories = ArticlesData.GetSelectedCatagories(id).Select(e => e.categoriesId).ToArray();
+            TempData["PrevSelectedCategories"] = SelectedCategories;// Post-ის edit-თვის გადასაცემი კატეგორიების 
 
-            //var categoryResult = _db.articleCategories.Where(e => e.articlesId == id).ToList();
-            //var CategoryIDResult = _db.articleCategories.Where(e => e.articlesId == result.Id).ToList();          
-            //int[] CategoriesIDs = categoryResult.Split(',').Select(n => Convert.ToInt32(n)).ToArray();
-            //ViewBag.Categories = new MultiSelectList(_db.categories.ToList(), "Id", "email", CategoryIDResult)
+            //ამ ცვლადში ვპოულობთ უკვე დამატებულ მოთხოვნებს და ვაკონვერტირებთ მასივში          
+            List<int> Selectedrequests = ArticlesData.GetSelectedRequest(id).Select(e =>(int)e.requestsId).ToList();         
+            TempData["PrevSelectedRequests"] = Selectedrequests;// Post-ის edit-თვის გადასაცემი მოთხოვნების სია
+
 
             var customArticle = new ArticlesCustomClass()
             {
-            Id = result.Id,
-            Title =  result.title,
-            Content=  result.content,  
-            UsersId = result.usersId,
-             };
+                Id = result.Id,
+                Title = result.title,
+                Content = result.content,
+                CategoriesList = SelectedCategories,
+                RequestsList = Selectedrequests         
+            };
             return View(customArticle);
        }
 
@@ -431,18 +439,59 @@ namespace HowToWebApplication.Controllers
         //// POST: Articles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditArticles(ArticlesCustomClass model)
+        public ActionResult EditArticles(ArticlesCustomClass model, HttpPostedFileBase[] images)
         {
-       
-            if (ModelState.IsValid)
+            var result = _db.articles.FirstOrDefault(e => e.Id == model.Id);
+            ViewBag.Categories = _db.categories.ToList();
+            
+            // იმ კატეგორიების წასაშლელი კოდი, რომელიც მომხმარებელმა მულტისელექტლისტიდან ამოშალა
+            if (model.CategoriesList != null)
             {
-                ArticlesData.EditArticles(model);
-                return RedirectToAction("ArticlesList");
+                var PrevSelectedCategories = TempData["PrevSelectedCategories"] as IEnumerable<int>;
+                ArticlesData.DeleteUnselectedCategories(model, PrevSelectedCategories);
+
             }
+           
+            // იმ მოთხოვნების წასაშლელი კოდი, რომელიც მომხმარებელმა მულტისელექტლისტიდან ამოშალა          
+            var PrevSelectedRequests = TempData["PrevSelectedRequests"] as IEnumerable<int>;
+            ArticlesData.DeleteUnselectedRequest(model, PrevSelectedRequests);
+
+            // შეცვლილი მოდელის დამატება
+            if (ModelState.IsValid)
+                {
+                    ArticlesData.EditArticles(model, images);
+                    return RedirectToAction("ArticlesList");
+                } 
             return View(model);
         }
 
 
+         [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult EditMainImage(int id, int primary)
+        {
+            var oldMain = _db.images.Where(x => x.articlesId == id && x.isMain == true).FirstOrDefault();
+
+            var newMain = _db.images.Where(x => x.articlesId == id && x.Id == primary).FirstOrDefault();
+
+            if (oldMain != null)
+            {
+                oldMain.isMain = false;
+            }
+            if (newMain != null)
+            {
+
+                newMain.isMain = true;
+            }
+            else
+            {
+                oldMain.isMain = true;
+
+            }          
+            _db.SaveChanges();
+            return RedirectToAction("ArticlesList");
+        }
+    
 
 
         // GET: Articles/Delete/5
@@ -477,10 +526,10 @@ namespace HowToWebApplication.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult DeleteImages(int id)
+        public ActionResult DeleteImages(int id,int primary)
         {
-            var articleIds = _db.articles.FirstOrDefault(e => e.Id == id);
-            var result = _db.images.FirstOrDefault(e => e.articlesId == articleIds.Id);
+            //var articleIds = _db.articles.FirstOrDefault(e => e.Id == id);
+            var result = _db.images.FirstOrDefault(x => x.articlesId == id && x.Id == primary);
             try
             {
                 ArticlesData.DeleteImages(result);
@@ -612,10 +661,9 @@ namespace HowToWebApplication.Controllers
             {   
                 Title= result.title,
                 Content = result.content,
-                IsDone = result.isDone,
-                Upvote=result.upvote,   
-                UsersId = result.usersId,
-
+                //IsDone = result.isDone,
+                //Upvote=result.upvote,   
+                //UsersId = result.usersId,
             };
             return View(customRequest);
         }
@@ -667,7 +715,7 @@ namespace HowToWebApplication.Controllers
             return RedirectToAction("RequestsList");
         }
 
-      
+
 
 
         //[ValidateAntiForgeryToken]
@@ -683,6 +731,43 @@ namespace HowToWebApplication.Controllers
         //    }
         //    return RedirectToAction("index");
         //}
+
+
+        [HttpPost]
+        public ActionResult DoneRequest(int id)
+        {
+
+            try
+            {
+                RequestData.DoneRequest(id);
+                return Content(Boolean.TrueString);
+            }
+            catch
+            {
+                //return View(model);
+                return Content(Boolean.FalseString);
+            }
+            //return RedirectToAction("ArticlesList");
+        }
+
+
+        //POST: Categories/block/5
+        [HttpPost]
+        public ActionResult UnDoneRequest(int id)
+        {
+            try
+            {
+                RequestData.UnDoneRequest(id);
+                return Content(Boolean.TrueString);
+            }
+            catch
+            {
+                //return View(model);
+                return Content(Boolean.FalseString);
+            }
+            //return RedirectToAction("ArticlesList");
+        }
+
 
         #endregion
 

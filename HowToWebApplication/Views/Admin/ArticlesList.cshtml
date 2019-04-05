@@ -7,11 +7,15 @@
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 </head>
 
+
 <p>
     @Html.ActionLink("Create New", "CreateArticles")
 </p>
 <table class="table">
     <tr>
+        <th>
+            Main Images
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.title)
         </th>
@@ -22,80 +26,109 @@
             @Html.DisplayNameFor(model => model.isBlocked)
         </th>
         <th>
-            Author
+            Authors
         </th>
         <th>
-            rating
+            Ratings
         </th>
         <th>
-            categories
+            Categories
         </th>
         <th></th>
     </tr>
-
+  
+  
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.isBlocked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.users.name)  @Html.DisplayFor(modelItem => item.users.surname)
-            </td>
-            <td>
-
-                @if (item.ratings.Count() != 0)
+                @{var counter = 0;}
+                @if (item.images.Count() != 0)
                 {
-
-                    @Html.DisplayFor(modelItem => item.ratings.Average(e => e.rating))
-                    break;
-                }
-                else
-                {
-                    <p>---------</p>
-                }
-
-            </td>
-            <!--გამოსაცდელია-->
-            <td>
-                @foreach (var cat in item.articleCategories)
-                {
-                    foreach (var category in ViewBag.Categories)
+                    foreach (var pic in item.images)
                     {
-                        if (cat.categoriesId == category.Id)
+                        if (pic.isMain == true)
                         {
-                            <p>@category.name</p>
+                            counter++;
+                            <div id="mainPic">
+                                <img src="@Url.Content(pic.url)" style=" width: 50px; height:50px;" />
+                            </div>
                         }
                     }
-                }
-            </td>
-
-            <td>
-                @Html.ActionLink("Edit", "EditArticles", new { id = item.Id }) |
-                @Html.ActionLink("Details", "ArticlesDetails", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "DeleteArticle", new { id = item.Id }) |
-                @if (item.isBlocked == false)
-                {
-
-
-                    @Html.ActionLink("Block", "BlockArticle", new { id = item.Id }, new { @class = "block-link" })
+                    if (counter == 0)
+                    {
+                        <div id="mainPic">
+                            <img src="/images/NoImage.png" style=" width: 50px; height:50px;" />
+                        </div>
+                    }
                 }
                 else
                 {
-
-
-                    @Html.ActionLink("Unblock", "UnBlockArticle", new { id = item.Id }, new { @class = "Unblock-link" })
+                    <div id="mainPic">
+                        <img src="/images/NoImage.png" style=" width: 50px; height:50px;" />
+                    </div>
                 }
             </td>
-        </tr>
-    }
-</table>
+        <td>
+            @Html.DisplayFor(modelItem => item.title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.isBlocked)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.users.name)  @Html.DisplayFor(modelItem => item.users.surname)
+        </td>
+        <td>
+
+            @if (item.ratings.Count() != 0)
+            {
+
+                @Html.DisplayFor(modelItem => item.ratings.Average(e => e.rating))
+                break;
+            }
+            else
+            {
+                <p>---------</p>
+            }
+
+        </td>
+        <!--გამოსაცდელია-->
+        <td>
+            @foreach (var cat in item.articleCategories)
+            {
+                foreach (var category in ViewBag.Categories)
+                {
+                    if (cat.categoriesId == category.Id)
+                    {
+                        <p>@category.name</p>
+                    }
+                }
+            }
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "EditArticles", new { id = item.Id }) |
+            @Html.ActionLink("Details", "ArticlesDetails", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "DeleteArticle", new { id = item.Id }) |
+            @if (item.isBlocked == false)
+            {
+
+
+                @Html.ActionLink("Block", "BlockArticle", new { id = item.Id }, new { @class = "block-link" })
+            }
+            else
+            {
+
+
+                @Html.ActionLink("Unblock", "UnBlockArticle", new { id = item.Id }, new { @class = "Unblock-link" })
+            }
+        </td>
+    </tr>
+}
+            </table>
 
 <div id="block-dialog" title="Confirmation">
     <p>Are you sure you want to block this article?</p>

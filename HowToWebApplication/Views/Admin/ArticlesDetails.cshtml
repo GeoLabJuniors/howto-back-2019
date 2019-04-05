@@ -98,35 +98,55 @@
             </dd>
         }
 
-
         <dt>
             images
         </dt>
 
         <dd>
             <div class="pic">
-
                 @if (Model.images.Count != 0)
                 {
-
                     foreach (var item in Model.images)
                     {
                         <div class="img" style="position:relative; min-width: 230px; min-height: 230px; padding: 13px; display: inline-block; ">
                             <img src="@Url.Content(item.url)" style="width:200px" ; />
-                            @*<button class="btn btn-default" id="PhotoId" style=" position: absolute; margin:0; ,top:0px; right: 0px; ">X</button>*@
                         </div>
                     }
                 }
                 else
                 {
                     <div> სურათი არაა დამატებული </div>
-                    @*<div class="col-md-10">
-                            <div><input type="file" class="btn btn-primary" name="images" multiple></div>
-                        </div>
-                        <button class="btn btn-default" id="AddPhoto" style=" position: absolute; margin:0;,top:0px; right: 0px; ">Add image</button>*@
-
                 }
+            </div>
+        </dd>
 
+        <dt>
+            Main image
+        </dt>
+        <dd>
+            <div class="Mainpic">
+                @{var counter = 0;}
+                @if (Model.images.Count != 0)
+                {
+                    foreach (var item in Model.images)
+                    {
+                        if (item.isMain == true)
+                        {
+                            counter++;
+                            <div class="img" style="position:relative; min-width: 230px; min-height: 230px; padding: 13px; display: inline-block; ">
+                                <img src="@Url.Content(item.url)" style="width:200px" ; />
+                            </div>
+                        }
+                    }
+                    if (counter == 0)
+                    {
+                        <div> მთავარი სურათი არაა დამატებული </div>
+                    }
+                }
+                else 
+                {
+                    <div> მთავარი სურათი არაა დამატებული </div>
+                }
             </div>
         </dd>
     </dl>

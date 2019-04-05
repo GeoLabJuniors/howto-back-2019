@@ -1,5 +1,11 @@
 ﻿
 @model HowToWebApplication.Models.RequestsCustomClass
+
+<style>
+    .long-textbox {
+        max-width: none;
+    }
+</style>
 @using HowToWebApplication.Helpers;
 
 @using (Html.BeginForm())
@@ -15,7 +21,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control long-textbox" } })
                 @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -23,12 +29,12 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextAreaFor(model => model.Content, htmlAttributes: new { @class = "form-control long-textbox", @rows = 10 })
                 @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             @Html.LabelFor(model => model.Upvote, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Upvote, new { htmlAttributes = new { @class = "form-control" } })
@@ -52,7 +58,7 @@
                 @Html.DropDownList("UsersId", ViewBag.UserId as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.UsersId, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

@@ -80,26 +80,25 @@ namespace HowToWebApplication.Controllers
                 {
                     LoginHelper.CreateUser(new users()
                     {
-                        Id= dataProvider.LoginCategory(user).Id,
+                        Id = dataProvider.LoginCategory(user).Id,
                         password = user.Password,
                         email = user.Email,
                         categoriesId = dataProvider.LoginCategory(user).categoriesId
                     });
                     return RedirectToAction("Index", "Admin");
-                        }
-                 else
-                    {
-                       ViewBag.Error = "თქვენ დაბლოკილი ხართ. კითხვების შემთხვევაში მოგვწერეთ საიტზე მითითებულ იმეილზე.";
-                       return View();
-                       }   
-                 }
+                }
+                else
+                {
+                    ViewBag.Error = "თქვენ დაბლოკილი ხართ. კითხვების შემთხვევაში მოგვწერეთ საიტზე მითითებულ იმეილზე.";
+                    return View();
+                }
+            }
             else
             {
                 ViewBag.Error = "არასწორადაა მონაცემები შეყვანილი";
                 return View();
-                 }
+            }
         }
-            
         
 
         //

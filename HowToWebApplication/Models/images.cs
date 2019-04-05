@@ -19,6 +19,7 @@ namespace HowToWebApplication.Models
         public string url { get; set; }
         public Nullable<int> articlesId { get; set; }
         public Nullable<int> usersId { get; set; }
+        public Nullable<bool> isMain { get; set; }
     
         public virtual articles articles { get; set; }
         public virtual users users { get; set; }

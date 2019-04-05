@@ -52,6 +52,7 @@
     <EntitySetMapping Name="images">
       <EntityTypeMapping TypeName="HowToDbModel.images">
         <MappingFragment StoreEntitySet="images">
+          <ScalarProperty Name="isMain" ColumnName="isMain" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="name" ColumnName="name" />
           <ScalarProperty Name="url" ColumnName="url" />

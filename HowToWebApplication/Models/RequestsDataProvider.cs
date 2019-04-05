@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-
+using HowToWebApplication.Helpers;
 
 namespace HowToWebApplication.Models
 {
@@ -32,22 +32,33 @@ namespace HowToWebApplication.Models
 
         public void CreateRequest(RequestsCustomClass request)
         {
-            
+            //var dateString = DateTime.Now.ToString("yyyyMMdd");
             var newRequest = new requests();
-            newRequest.number = request.Number;
             newRequest.title = request.Title;
+            newRequest.number = null;
             newRequest.content = request.Content;
             newRequest.date = DateTime.Now;
-            newRequest.upvote = request.Upvote;
-            newRequest.isDone = request.IsDone;
-            newRequest.usersId = request.UsersId;
+           // newRequest.upvote = request.Upvote;
+            newRequest.isDone = false;
+            if (LoginHelper.IsLoggedIn())
+            {
+                newRequest.usersId = LoginHelper.CurrentUser().Id;
+            }
+            else
+            {
+                newRequest.usersId = 16; // რომ წავა დასასრულისკენ პროექტი, ეს იფ-ელსი წაიშლება და მარტო current user დარჩება 
+            }
 
             if (!ExistCustomRequest(request))
             {
                 _db.requests.Add(newRequest);
-
                 _db.SaveChanges();
-               
+
+                //რადგან აიდი მხოლოდ ბაზაში ჩაწერის შემდეგ ენიჭება, ნუმერაციას ბაზაში ჩაწერის შემდეგ ვანიჭებთ, მანამდე ნუმერაცია ნალია
+                var dateString = DateTime.Now.ToString("yyyyMM"); // თარიღი სტრინგად
+                newRequest.number = Int32.Parse(dateString + newRequest.Id); // თარიღი+ახალი აიდი
+                _db.SaveChanges();
+
 
                 _db.requestsArticles.Add(
                    new requestsArticles()
@@ -69,9 +80,9 @@ namespace HowToWebApplication.Models
             {
                 result.title = result.title;
                 result.content = request.Content;
-                result.upvote = request.Upvote;
-                result.isDone = request.IsDone;
-                result.usersId = request.UsersId;
+                //result.upvote = 0;
+                //result.isDone = request.IsDone;
+                //result.usersId = request.UsersId;
             }
             _db.SaveChanges();
         }
@@ -100,9 +111,19 @@ namespace HowToWebApplication.Models
             var getUser = _db.users.FirstOrDefault(e => e.Id == id);
             return _db.requests.Where(e => e.usersId == getUser.Id);
         }
+
+
+        public void DoneRequest(int id)
+        {
+            var request = _db.requests.FirstOrDefault(e => e.Id == id);
+            request.isDone = true;
+            _db.SaveChanges();
+        }
+        public void UnDoneRequest(int id)
+        {
+            var request = _db.requests.FirstOrDefault(e => e.Id == id);
+            request.isDone = false;
+            _db.SaveChanges();
+        }
     }
-
-
-    
-
 }

@@ -70,6 +70,7 @@
     <Property Name="usersId" Type="Int32" />
     <NavigationProperty Name="articles" Relationship="Self.FK_media_articles" FromRole="images" ToRole="articles" />
     <NavigationProperty Name="users" Relationship="Self.FK_media_users" FromRole="images" ToRole="users" />
+    <Property Name="isMain" Type="Boolean" />
   </EntityType>
   <EntityType Name="ratings">
     <Key>
@@ -88,7 +89,7 @@
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="number" Type="Int32" Nullable="false" />
+    <Property Name="number" Type="Int32" />
     <Property Name="content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="upvote" Type="Int32" Nullable="false" />
     <Property Name="isDone" Type="Boolean" Nullable="false" />

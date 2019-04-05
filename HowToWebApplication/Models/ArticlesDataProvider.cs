@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using HowToWebApplication.Helpers;
 
 namespace HowToWebApplication.Models
 {
@@ -29,20 +30,25 @@ namespace HowToWebApplication.Models
 
         
 
-
-
-
         //Create
         public void CreateArticles(ArticlesCustomClass article, HttpPostedFileBase[] images)
         {
-
+            
             var newarticle = new articles();
            
             newarticle.title = article.Title;
             newarticle.content = article.Content;
             newarticle.date = DateTime.Now;
-            newarticle.isBlocked = false;
-            newarticle.usersId = article.UsersId;
+            newarticle.isBlocked = true;
+
+            if (LoginHelper.IsLoggedIn())
+            {
+                newarticle.usersId = LoginHelper.CurrentUser().Id;
+            }
+            else
+            {
+                newarticle.usersId = 16; // რომ წავა დასასრულისკენ პროექტი, ეს იფ-ელსი წაიშლება და მარტო current user დარჩება 
+            }
 
 
             if (!ExistCustomArticle(article))
@@ -77,15 +83,15 @@ namespace HowToWebApplication.Models
                     }
                 }
 
-                //სურათების create გავაკეთე, ედით ჯერ არ გითქვამს მარა ვცადე მაინც, 
-                // ედითშიწაშლა გამოდის,  აი ისევ დამატება არა და მაგი გასარკვევი მექნება
+               
                 var mapPath = HostingEnvironment.MapPath("~/images/");
                 foreach (var file in images)
                 {
                     if (file != null)
                     {
                         file.SaveAs(mapPath + file.FileName);
-                        _db.images.Add(new images() { name = file.FileName, url = "~/images/" + file.FileName,  articlesId = newarticle.Id, usersId = null});
+                        _db.images.Add(new images() { name = file.FileName, url = "~/images/" + file.FileName,
+                                                      articlesId = newarticle.Id, usersId = null, isMain = false });                   
                         _db.SaveChanges();
                     }
                     else
@@ -95,9 +101,27 @@ namespace HowToWebApplication.Models
                 }
             }
         }
+        //selected categories helper function 
+        public IEnumerable<articleCategories>  GetSelectedCatagories(int id)
+        {
+            var result = _db.articles.FirstOrDefault(e => e.Id == id);
+            var categoryResult = _db.articleCategories.Where(e => e.articlesId == result.Id);
+            return categoryResult;
+        }
+
+        //selected request helper function 
+        public IEnumerable<requestsArticles> GetSelectedRequest(int id)
+        {
+            var result = _db.articles.FirstOrDefault(e => e.Id == id);
+            var requestResult = _db.requestsArticles.Where(e => e.articlesId == result.Id);
+            return requestResult;
+        }
+
+        
+
 
         //Edit 
-        public void EditArticles(ArticlesCustomClass article)
+        public void EditArticles(ArticlesCustomClass article, HttpPostedFileBase[] images)
         {
             var result = _db.articles.FirstOrDefault(e => e.Id == article.Id);
             var categoryResult = _db.articleCategories.Where(e => e.articlesId == article.Id);
@@ -106,19 +130,19 @@ namespace HowToWebApplication.Models
             {         
                 result.title = article.Title;
                 result.content = article.Content;
-                result.usersId = article.UsersId;
+                //result.usersId = article.UsersId;
 
             }
             _db.SaveChanges();
 
-            //მთავარი პრობლემა ამ ბლოკში : ვერ გამომაქვს შექმნის დროს უკვე დამატებული კატეგორიები და მოთხოვნები
-            //ჩვეულებრივი დროფდაუნისგან განსხვავებით მულტისელექტლისტს ვიყენებ და მანდ სხვანაირად უნდა მარა ჯერ გზა ვერ მოვნახე
-
 
             //კატეგორიის ცვლილებას აკეთებს
-            var notTheseCategoryIds = categoryResult.Select(e => e.categoriesId);
+            if (article.CategoriesList != null)
+            {
+                var notTheseCategoryIds = categoryResult.Select(e => e.categoriesId);
                 var CategorySelects = article.CategoriesList.Where(f => !notTheseCategoryIds.Contains(f)).ToList();
-          
+
+
                 foreach (var categoryId in CategorySelects)
                 {
                     _db.articleCategories.Add(
@@ -129,7 +153,7 @@ namespace HowToWebApplication.Models
                    });
                     _db.SaveChanges();
                 }
-            
+            }
 
             //რექუესტის ცვლილების აკეტებს
             if (article.RequestsList != null)
@@ -147,7 +171,91 @@ namespace HowToWebApplication.Models
                 }
                 _db.SaveChanges();
             }
+
+
+            if (images != null)
+            {
+                var mapPath = HostingEnvironment.MapPath("~/images/");
+                foreach (var file in images)
+                {
+                    if (file != null)
+                    {
+                        file.SaveAs(mapPath + file.FileName);
+                        _db.images.Add(new images() { name = file.FileName, url = "~/images/" + file.FileName,
+                                                     articlesId = result.Id, usersId = null, isMain=false });
+                        _db.SaveChanges();
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
         }
+
+        // წაშლილი კატეგორიის ბაზიდან ამოშლის ფუნქცია
+        public void DeleteUnselectedCategories(ArticlesCustomClass model, IEnumerable<int> PrevSelectedCategories)
+        {
+            var result = _db.articles.FirstOrDefault(e => e.Id == model.Id);
+            var UnSelectedCategories = PrevSelectedCategories.Where(f => !model.CategoriesList.Contains(f)).ToList();
+            var categoryResult = _db.articleCategories.Where(e => e.articlesId == result.Id);
+
+            foreach (var category in UnSelectedCategories)
+            {
+                foreach (var item in categoryResult)
+                {
+                    if (category == item.categoriesId)
+                    {
+                        var UnSelectedCategoriesResult = _db.articleCategories.Where(e => e.categoriesId == category);
+                        _db.articleCategories.RemoveRange(UnSelectedCategoriesResult);
+                    }
+
+                }
+            }
+            _db.SaveChanges();
+        }
+
+        // წაშლილი მოთხოვნის ბაზიდან ამოშლის ფუნქცია
+        public void DeleteUnselectedRequest(ArticlesCustomClass model, IEnumerable<int> PrevSelectedRequests)
+        {
+            var result = _db.articles.FirstOrDefault(e => e.Id == model.Id);
+            var requestResult = _db.requestsArticles.Where(e => e.articlesId == result.Id);
+            if (model.RequestsList != null)
+            {
+                var UnSelectedRequests = PrevSelectedRequests.Where(f => !model.RequestsList.Contains(f)).ToList();
+                foreach (var request in UnSelectedRequests)
+                {
+                    foreach (var item in requestResult)
+                    {
+                        if (request == item.requestsId)
+                        {
+                            var UnSelectedRequestsResult = _db.requestsArticles.Where(e => e.requestsId == request);
+                            _db.requestsArticles.RemoveRange(UnSelectedRequestsResult);
+                        }
+
+                    }
+                }
+                _db.SaveChanges();
+            }
+            else // თუ არც ერთ მოთხოვნა აღარაა მულტისელექტში, ყველა მოთხოვნა იშლება  ბაზიდან
+            {
+                foreach (var request in PrevSelectedRequests)
+                {
+                    foreach (var item in requestResult)
+                    {
+                        if (request == item.requestsId)
+                        {
+                            var UnSelectedRequestsResult = _db.requestsArticles.Where(e => e.requestsId == request);
+                            _db.requestsArticles.RemoveRange(UnSelectedRequestsResult);
+                        }
+                    }
+                }
+                _db.SaveChanges();
+            }
+        }
+
+
+
         ////Delete
         //public void deleteCategories(articles articles)
         //{
@@ -156,7 +264,6 @@ namespace HowToWebApplication.Models
         //    _db.SaveChanges();
         //}
 
-  
 
         public void FullDeleteArticle(articles article)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 
 namespace HowToWebApplication.Models
@@ -18,6 +19,7 @@ namespace HowToWebApplication.Models
 
 
         [Required]
+        [AllowHtml]
         [Display(Name = "Content")]
         public string Content { get; set; }
 
@@ -26,7 +28,8 @@ namespace HowToWebApplication.Models
         [Display(Name = "User")]
         public int UsersId { get; set; }
 
-        [Display(Name = "Category")]
+        [Required]
+        [Display(Name = "Category")] 
         public int[] CategoriesList { get; set; }
 
 
